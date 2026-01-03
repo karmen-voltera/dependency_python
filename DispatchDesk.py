@@ -18,7 +18,7 @@
 # no business logic unrelated to physically moving the package
 # swappable without modifying the dispatch desk
 
-from Error import DimensionError, WeightError, FragileItemError, DestinationError
+from Error import DimensionError, WeightError, FragileItemError, DestinationError, DispatchError
 from Package import Package
 from ExitMechanism import ExitMechanism
 
@@ -29,18 +29,23 @@ class DispatchDesk():
     # validates that all required information is there for the package
 
     def can_dispatch(self, package: Package, exit_mechanism: ExitMechanism) -> bool:
-        if not package.destination:
-            raise DestinationError
-        if not exit_mechanism.within_weight_limit(package):
-            raise WeightError
-        if not exit_mechanism.within_size_limit(package):
-            raise DimensionError
-        if not exit_mechanism.within_length(package):
-            raise DimensionError
+        valid_countries = ['Canada', 'USA']
+        if not any(country in package.destination for country in valid_countries):
+            raise DestinationError("We do not service your area")
+        if not exit_mechanism.within_weight_limit(package) and package.weight < 0:
+            #put weight < 0 check here as it applies to all of the mechanisms
+            raise WeightError()
+        if not exit_mechanism.within_volume_limit(package):
+            raise DimensionError("Package volume exceeds limit")
+        if not exit_mechanism.within_measurement(package):
+            raise DimensionError("Package does not meet length limits for this exit mechanism")
         if package.fragile and not exit_mechanism.can_handle_fragile():
-            raise FragileItemError
+            raise FragileItemError()
         
         return True
     
-    def dispatch_package(self, package: Package, exit_mechanism: ExitMechanism) -> bool:
-        return exit_mechanism.move_package(package)
+    def dispatch_package(self, package: Package, exit_mechanism: ExitMechanism) -> str:
+        result= exit_mechanism.move_package(package)
+        if not result:
+            raise DispatchError("Failed to dispatch package using exit mechanism")
+        return "Successfully dispatched package"

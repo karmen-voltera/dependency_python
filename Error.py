@@ -10,3 +10,7 @@ class DestinationError(Exception):
 class FragileItemError(Exception):
     def __init__(self, message="Fragile item cannot be handled by this exit mechanism."):
         super().__init__(message)
+class DispatchError(Exception):
+    def __init__(self, message="Error dispatching package."):
+        self.message = message
+        super().__init__(self.message)

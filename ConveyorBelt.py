@@ -5,10 +5,10 @@ class ConveyorBelt (ExitMechanism):
     def within_weight_limit(self, package) -> bool:
         return package.weight <= 100
     
-    def within_length(self, package) -> bool:
+    def within_measurement(self, package) -> bool:
         return package.longest_side() <= 200
     
-    def within_size_limit(self, package) -> bool:
+    def within_volume_limit(self, package) -> bool:
         max_size = 100 * 150 * 200 
         return package.volume() <= max_size
     
@@ -18,5 +18,3 @@ class ConveyorBelt (ExitMechanism):
     def can_handle_irregular_size(self):
         return True
     
-    def move_package(self, package) -> bool:
-        return True

@@ -1,4 +1,7 @@
 from abc import ABC, abstractmethod
+from random import randint
+
+from Error import DispatchError
 
 # Exit mechanism interface
 # this has to describe what needs to happen, not HOW
@@ -17,8 +20,8 @@ class ExitMechanism(ABC):
         pass
 
     @abstractmethod
-    def within_size_limit(self, package) -> bool:
-        """Is the size of the package within the mechanism's limits?"""
+    def within_volume_limit(self, package) -> bool:
+        """Is the volume of the package within the mechanism's limits?"""
         pass
 
     @abstractmethod
@@ -32,11 +35,13 @@ class ExitMechanism(ABC):
         pass
 
     @abstractmethod
-    def within_length(self, package) -> bool:
+    def within_measurement(self, package) -> bool:
         """Is the longest side of the package within the mechanism's limits?"""
         pass
 
-    @abstractmethod
+    #because all concrete classes use the same, I just implemented it here, otherwise, each concrete class would have its own implementation
     def move_package(self, package) -> bool:
         """Move package using exit mechanism"""
-        pass
+        if (randint(1, 100) <= 50):
+            return True
+        return False
